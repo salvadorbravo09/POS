@@ -13,8 +13,7 @@ export class CategoriesService {
   ) {}
 
   create(createCategoryDto: CreateCategoryDto) {
-    console.log(createCategoryDto);
-    return 'This action adds a new category';
+    return this.categoryRepository.save(createCategoryDto);
   }
 
   findAll() {
