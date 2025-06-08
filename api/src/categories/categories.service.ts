@@ -29,12 +29,13 @@ export class CategoriesService {
   }
 
   async update(id: number, updateCategoryDto: UpdateCategoryDto) {
-    const category = await this.findOne(id);
+    const category = await this.findOne(id); // Reutiliza el método findOne para obtener la categoría
     category.name = updateCategoryDto.name;
     return this.categoryRepository.save(category);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} category`;
+  async remove(id: number) {
+    const category = await this.findOne(id); // Reutiliza el método findOne para obtener la categoría
+    return await this.categoryRepository.delete(category);
   }
 }
