@@ -23,6 +23,11 @@ export class ProductsService {
     if (!category) {
       throw new NotFoundException(`La categoria no existe`);
     }
+
+    return this.productRepository.save({
+      ...createProductDto,
+      category,
+    });
   }
 
   findAll() {
