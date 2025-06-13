@@ -40,7 +40,7 @@ export class ProductsService {
    * Los productos se ordenan por ID de forma descendente (más recientes primero)
    * y se incluyen sus categorías relacionadas en la respuesta
    */
-  async findAll(categoryId?: number, take?: number) {
+  async findAll(categoryId?: number, take?: number, skip?: number) {
     const options: FindManyOptions<Product> = {
       relations: {
         category: true,
@@ -49,6 +49,7 @@ export class ProductsService {
         id: 'DESC',
       },
       take,
+      skip,
     };
 
     // Si hay una categoria, filtramos por categoria
@@ -69,8 +70,18 @@ export class ProductsService {
     };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} product`;
+  async findOne(id: number) {
+    const product = await this.productRepository.findOne({
+      where: { id },
+      relations: {
+        category: true,
+      },
+    });
+
+    if (!product) {
+      throw new NotFoundException(`El producto con ID ${id} no existe`);
+    }
+    return product;
   }
 
   update(id: number, updateProductDto: UpdateProductDto) {
