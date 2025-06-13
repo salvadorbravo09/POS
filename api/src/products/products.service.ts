@@ -3,7 +3,7 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
-import { Repository } from 'typeorm';
+import { FindManyOptions, Repository } from 'typeorm';
 import { Category } from 'src/categories/entities/category.entity';
 
 @Injectable()
@@ -30,36 +30,37 @@ export class ProductsService {
     });
   }
 
+  /**
+   * Obtiene todos los productos con opción de filtrar por categoría
+   * @param categoryId - ID opcional de la categoría para filtrar los productos
+   * @returns Un objeto que contiene:
+   *          - products: Array de productos con sus categorías relacionadas
+   *          - total: Número total de productos encontrados
+   *
+   * Los productos se ordenan por ID de forma descendente (más recientes primero)
+   * y se incluyen sus categorías relacionadas en la respuesta
+   */
   async findAll(categoryId?: number) {
-    if (categoryId) {
-      const [products, total] = await this.productRepository.findAndCount({
-        where: {
-          category: {
-            id: categoryId,
-          },
-        },
-        relations: {
-          category: true,
-        },
-        order: {
-          id: 'DESC',
-        },
-      });
-
-      return {
-        products,
-        total,
-      };
-    }
-
-    const [products, total] = await this.productRepository.findAndCount({
+    const options: FindManyOptions<Product> = {
       relations: {
         category: true,
       },
       order: {
         id: 'DESC',
       },
-    });
+    };
+
+    // Si hay una categoria, filtramos por categoria
+    if (categoryId) {
+      options.where = {
+        category: {
+          id: categoryId,
+        },
+      };
+    }
+
+    const [products, total] =
+      await this.productRepository.findAndCount(options);
 
     return {
       products,
