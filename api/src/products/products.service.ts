@@ -40,7 +40,7 @@ export class ProductsService {
    * Los productos se ordenan por ID de forma descendente (más recientes primero)
    * y se incluyen sus categorías relacionadas en la respuesta
    */
-  async findAll(categoryId?: number) {
+  async findAll(categoryId?: number, take?: number) {
     const options: FindManyOptions<Product> = {
       relations: {
         category: true,
@@ -48,6 +48,7 @@ export class ProductsService {
       order: {
         id: 'DESC',
       },
+      take,
     };
 
     // Si hay una categoria, filtramos por categoria
