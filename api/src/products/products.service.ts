@@ -84,8 +84,25 @@ export class ProductsService {
     return product;
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+  async update(id: number, updateProductDto: UpdateProductDto) {
+    const product = await this.findOne(id);
+    Object.assign(product, updateProductDto);
+
+    // Busca la categoria si se proporciona categoryId
+    if (updateProductDto.categoryId) {
+      const category = await this.categoryRepository.findOneBy({
+        id: updateProductDto.categoryId,
+      });
+
+      // Si no se encuentra la categoria, lanza una excepción
+      if (!category) {
+        throw new NotFoundException(`La categoria no existe`);
+      }
+
+      // Asignar la categoría al producto
+      product.category = category;
+    }
+    return await this.productRepository.save(product);
   }
 
   remove(id: number) {
