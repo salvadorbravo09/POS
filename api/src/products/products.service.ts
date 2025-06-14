@@ -105,7 +105,11 @@ export class ProductsService {
     return await this.productRepository.save(product);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} product`;
+  async remove(id: number) {
+    const product = await this.findOne(id);
+    if (!product) {
+      throw new NotFoundException(`El producto con ID ${id} no existe`);
+    }
+    return this.productRepository.remove(product);
   }
 }
