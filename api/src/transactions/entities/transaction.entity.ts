@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { TransactionContents } from './content.entity';
 
 @Entity()
 export class Transaction {
@@ -10,4 +11,7 @@ export class Transaction {
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP(6)' })
   transactionDate: Date;
+
+  @OneToMany(() => TransactionContents, (transaction) => transaction.transaction)
+  contents: TransactionContents[];
 }
