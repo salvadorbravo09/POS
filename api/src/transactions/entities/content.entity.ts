@@ -1,10 +1,5 @@
 import { Product } from 'src/products/entities/product.entity';
-import {
-  Column,
-  Entity,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Transaction } from './transaction.entity';
 
 @Entity()
@@ -18,9 +13,14 @@ export class TransactionContents {
   @Column('decimal')
   price: number;
 
-  @ManyToOne(() => Product, (product) => product.id, { eager: true })
+  @ManyToOne(() => Product, (product) => product.id, {
+    eager: true,
+    cascade: true,
+  })
   product: Product;
 
-  @ManyToOne(() => Transaction, (transaction) => transaction.contents)
+  @ManyToOne(() => Transaction, (transaction) => transaction.contents, {
+    cascade: true,
+  })
   transaction: Transaction;
 }
